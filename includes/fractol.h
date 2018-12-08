@@ -30,6 +30,20 @@
 # define WINX 1300
 # define WINY 1300
 
+// JULIA DEFAULTS AND MACROS
+# define DCX -.7
+# define DCY .27015
+# define DMI 512
+
+# define ZX julia->zx
+# define ZY julia->zy
+# define CX julia->cx
+# define CY julia->cy
+# define TMP julia->tmp
+# define JI julia->max_iter
+
+
+
 typedef struct		s_img
 {
 	void			*ptr;

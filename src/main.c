@@ -80,51 +80,66 @@ t_fractal		*init_fractal(char *title)
 	return (fractal);
 }
 
+typedef struct		s_julia
+{
+	long double 	zx;
+	long double 	zy;
+	long double 	tmp;
+	double			cx;
+	double			cy;
+	int				max_iter;
+	int				move_x;
+	int				move_y;
+	int				zoom;
+	int				color;
+}					t_julia;
+
+t_julia		*init_julia()
+{
+	t_julia	*julia = (t_julia *)ft_memalloc(sizeof(t_julia));
+	ZX = 0;
+	ZY = 0;
+	CX = DCX;
+	CY = DCY;
+	JI = DMI;
+	julia->move_x = 0;
+	julia->move_y = 0;
+	julia->zoom = 1;
+	return (julia);
+}
+
 void		build_fractal()
 {
-	t_fractal* julia = init_fractal("Julia");
+	t_fractal	*fractal = init_fractal("Julia");
+	t_julia		*julia = init_julia();
 	int x = -1;
 	int y = -1;
 	int i = 0;
-	long double zx = 0;
-	long double zy = 0;
-	int color = 0;
-	int max_iter = 256;
-	int move_x = 0;
-	int move_y = 0;
-	double c_x = -.7;
-	double c_y = .27015;
-	int zoom = 1;
-	long double tmp;
 	
 	while (++y < WINY)
 	{
 		x = -1;
 		while (++x < WINX)
 		{
-			zx = 1.5 * (x - WINX / 2) / (.5 * zoom * WINX) + move_x;
-			zy = (y - WINY / 2) / (.5 * zoom * WINY) + move_y;
-			while (zx * zx + zy * zy < 4 && ++i < max_iter)
+			ZX = 1.5 * (x - WINX / 2) / (.5 * julia->zoom * WINX) + julia->move_x;
+			ZY = (y - WINY / 2) / (.5 * julia->zoom * WINY) + julia->move_y;
+			while (ZX * ZX + ZY * ZY < 4 && ++i < JI)
 			{
-				tmp = zx * zx - zy * zy + c_x;
-				zy = 2 * zx * zy + c_y;
-				zx = tmp;
-				// or = zx;
-				// oi = zy;
-				// zx = tmp * tmp + oi * oi + 0;
-				// zy = 2 * tmp * oi - 0;
+				julia->tmp = ZX * ZX - ZY * ZY + CX;
+				ZY = 2 * ZX * ZY + CY;
+				ZX = julia->tmp;
 			}
 			// color = R | G | B
-			color = ((i % 256) << 16 | (i * i % 256) << 8 | (255 - i) % 256);
-			img_pixel_put(julia->img, x, y, color);
+			julia->color = ((i % 256) << 16 | (i * i % 256) << 8 | (255 - i) % 256);
+			img_pixel_put(fractal->img, x, y, julia->color);
 			i = 0;
 		}
 	}
-	mlx_put_image_to_window(julia->mlx, julia->win, julia->img->ptr, 0, 0);
-	mlx_destroy_image(julia->mlx, julia->img->ptr);
-	clear_image(julia);
-//	init_hooks(julia);
-	mlx_loop(julia->mlx);
+	mlx_put_image_to_window(fractal->mlx, fractal->win, fractal->img->ptr, 0, 0);
+	mlx_destroy_image(fractal->mlx, fractal->img->ptr);
+	clear_image(fractal);
+//	init_hooks(fractal);
+	mlx_loop(fractal->mlx);
 
 }
 
