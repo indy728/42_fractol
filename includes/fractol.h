@@ -27,9 +27,11 @@
 # define INV_FILE "unable to read file"
 # define ARRAY "input map does not exist or is not valid"
 # define KMDB(x) ft_printf("HERE %d\n", x);
-# define WINX 1300
-# define WINY 1300
+# define WINX 1440
+# define WINY 900
 
+# define MAINWINX 800
+# define MAINWINY 560
 // JULIA DEFAULTS AND MACROS
 # define DCX -.7
 # define DCY .27015
@@ -42,7 +44,23 @@
 # define TMP julia->tmp
 # define JI julia->max_iter
 
-
+typedef struct		s_julia
+{
+	long double 	zx;
+	long double 	zy;
+	long double 	tmp;
+	double			cx;
+	double			cy;
+	int				max_iter;
+	int				move_x;
+	int				move_y;
+	float			zoom;
+	int	color;
+	int				win_x;
+	int				win_y;
+	float			threshold;
+	void			**color_funcs;
+}					t_julia;
 
 typedef struct		s_img
 {
@@ -58,6 +76,7 @@ typedef struct		s_fractal
 	void			*mlx;
 	void			*win;
 	t_img			*img;
+	void			*algo;
 }					t_fractal;
 
 typedef enum		e_keys
@@ -75,6 +94,13 @@ typedef enum		e_keys
 	FN = 279
 }					t_keys;
 
+// unsigned int color1(int i);
+// unsigned int color2(int i);
+// unsigned int color3(int i);
+
+// JULIA
+void	build_julia(t_fractal *fractal);
+t_julia	*init_julia();
 /*
 **  Hook functions to handle user controls for wireframe viewing
 */
@@ -86,9 +112,12 @@ int					my_expose_funct(t_param *params);
 **  Functions for handling images.
 */
 
-/*void				image_init(t_param *params);
-void				image_put(t_param *params);
+void				image_init(t_fractal *fractal);
+void				image_put(t_fractal *fractal);
 void				img_pixel_put(t_img *img, int x, int y, int color);
-char				*wf_print_legend(t_param *params, char *path, char bottom);
-*/
+void				clear_image(t_fractal *fractal);
+
+
+// char				*wf_print_legend(t_param *params, char *path, char bottom);
+
 #endif
