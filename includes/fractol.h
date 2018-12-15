@@ -16,6 +16,7 @@
 # include "libft.h"
 # include "mlx.h"
 # include <math.h>
+# include <pthread.h>
 
 # define GRID 30
 # define HEIGHT 3
@@ -29,9 +30,12 @@
 # define KMDB(x) ft_printf("HERE %d\n", x);
 # define WINX 1440
 # define WINY 900
+# define CORES 4
+# define THREADS 8
+# define MAXTHREADS (CORES * THREADS)
 
 # define MAINWINX 800
-# define MAINWINY 560
+# define MAINWINY 576
 // JULIA DEFAULTS AND MACROS
 # define DCX -.7
 # define DCY .27015
@@ -55,11 +59,15 @@ typedef struct		s_julia
 	int				move_x;
 	int				move_y;
 	float			zoom;
-	int	color;
+	int				color;
 	int				win_x;
 	int				win_y;
 	float			threshold;
-	void			**color_funcs;
+	int				(*key_funct)();
+	int				mod;
+	int				step;
+	int				*steps;
+	// unsigned int	(*color_funcs)();
 }					t_julia;
 
 typedef struct		s_img
@@ -76,7 +84,10 @@ typedef struct		s_fractal
 	void			*mlx;
 	void			*win;
 	t_img			*img;
-	void			*algo;
+	void			*type;
+	void			*(*init)();
+	void			(*build)();
+	int				(*key_funct)();
 }					t_fractal;
 
 typedef enum		e_keys
@@ -101,6 +112,7 @@ typedef enum		e_keys
 // JULIA
 void	build_julia(t_fractal *fractal);
 t_julia	*init_julia();
+int					julia_key_funct(int keycode, t_fractal *fractals);
 /*
 **  Hook functions to handle user controls for wireframe viewing
 */

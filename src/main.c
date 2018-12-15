@@ -18,7 +18,7 @@ int			my_key_funct(int keycode, t_fractal *fractal);
 void	init_hooks(t_fractal *fractal, int track_mouse)
 {
 	mlx_do_key_autorepeatoff(fractal->mlx);
-	mlx_hook(fractal->win, 2, 0, my_key_funct, fractal);
+	mlx_hook(fractal->win, 2, 0, fractal->key_funct, fractal);
 	// mlx_hook(fractal->win, 3, 0, key_release_hook, fractal);
 // 	mlx_hook(fractal->ptr, 4, 0, mouse_press_hook, fractal);
 // 	mlx_hook(fractal->ptr, 5, 0, mouse_release_hook, fractal);
@@ -91,7 +91,7 @@ void	init_hooks(t_fractal *fractal, int track_mouse)
 // 		color_shift(keycode, &params->rgb->bmin);
 // }
 
-int			my_key_funct(int keycode, t_fractal *fractal)
+int			julia_key_funct(int keycode, t_fractal *fractal)
 {
 	// key_ops(keycode, params);
 	// if (keycode == ZERO)
@@ -105,15 +105,15 @@ int			my_key_funct(int keycode, t_fractal *fractal)
 	// 	color_swap(keycode, params);
 	if (keycode == ESC)
 		quit_fractal(fractal);
-	t_julia *julia = (t_julia *)fractal->algo;
+	t_julia *julia = (t_julia *)fractal->type;
 	if (keycode == A)
-		julia->cx += .0005;
+		CX += .0005;
 	if (keycode == D)
-		julia->cx -= .0005;
+		CX -= .0005;
 	if (keycode == W)
-		julia->cy += .0005;
+		CY += .0005;
 	if (keycode == S)
-		julia->cy -= .0005;
+		CY -= .0005;
 	if (keycode == RBRACK)
 		julia->zoom += .1;
 	if (keycode == LBRACK)
@@ -130,6 +130,14 @@ int			my_key_funct(int keycode, t_fractal *fractal)
 		julia->threshold *= 2;
 	if (keycode == MINUS)
 		julia->threshold /= 2;
+	if (keycode == O)
+		julia->step = ft_min(7, julia->step + 1);
+	if (keycode == ELL)
+		julia->step = ft_max(0, julia->step - 1);
+	if (keycode == U)
+		julia->mod = ft_min(20000, julia->mod * 2);
+	if (keycode == JAY)
+		julia->mod = ft_max(8, julia->mod / 2);
 	mlx_clear_window(fractal->mlx, fractal->win);
 	build_julia(fractal);
 	return (1);
@@ -150,10 +158,10 @@ void		quit_fractal(t_fractal *fractal)
 	mlx_destroy_window(fractal->mlx, fractal->win);
 	ft_putstr("ESC: Ending program.\n");
 	free(fractal);
-	exit(0);
+	exit(1);
 }
 
-t_fractal		*init_fractal(char *title)
+t_fractal		*init_fractal(char *title, void *(*algo)(), void (*build)(), int (*key_funct)())
 {
 	// Allocates memory the size of a t_fractal struct that contains a
 	// void *mlx, void *win, and a pointer to the t_img struct, which 
@@ -165,28 +173,27 @@ t_fractal		*init_fractal(char *title)
 	fractal->win = mlx_new_window(fractal->mlx, WINX, WINY, title);
 	// could put protection here in case either prev function fails
 	image_init(fractal);
-	fractal->algo = init_julia();
+	fractal->init = algo;
+	fractal->type = fractal->init();
+	fractal->build = build;
+	fractal->key_funct = key_funct;
 	return (fractal);
 }
 
-void		build_fractal()
+void		build_fractal(char *title, void *(*algo)(), void (*build)(), int (*key_funct)())
 {
-	t_fractal	*fractal = init_fractal("Julia");
-	build_julia(fractal);
+	t_fractal	*fractal = init_fractal(title, algo, build, key_funct);
 	
-	
-	
-	
+	fractal->build(fractal);
 	init_hooks(fractal, 1);
 	mlx_loop(fractal->mlx);
-
 }
 
 int			main(int ac, char **av)
 {
 	// VAR(t_list*, fractal_list, NULL);
 	// fractal_select(&fractal_list);
-	build_fractal(/*fractal_List*/);
+	build_fractal("Julia", (void *)&init_julia, &build_julia, &julia_key_funct);
 	//list delete;
 	return (0);
 }
