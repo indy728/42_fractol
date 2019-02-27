@@ -109,12 +109,18 @@ typedef enum		e_keys
 // unsigned int color3(int i);
 
 // JULIA
-void	build_julia(t_fractal *fractal);
-t_julia	*init_julia();
+void				build_julia(t_fractal *fractal);
+t_julia				*init_julia();
 int					julia_key_funct(int keycode, t_fractal *fractals);
 /*
 **  Hook functions to handle user controls for wireframe viewing
 */
+
+void				init_hooks(t_fractal *fractal, int track_mouse);
+int					loop_hook(t_fractal *fractal);
+
+void		quit_fractal(t_fractal *fractal);
+int			my_key_funct(int keycode, t_fractal *fractal);
 
 /*int					my_key_funct(int keycode, t_param *params);
 int					my_expose_funct(t_param *params);

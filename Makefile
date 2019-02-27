@@ -18,7 +18,7 @@ INC_MLX = $(addprefix -I, $(MLX_PATH))
 INC_LFT = $(addprefix -I, $(addprefix $(LIBFT_PATH), $(INC_PATH)))
 
 OBJ_NAME = $(SRC_NAME:.c=.o)
-SRC_NAME = main.c julia.c fractol_images.c
+SRC_NAME = main.c julia.c fractol_images.c mlx_hooks.c key_funcs.c
 
 all: $(NAME)
 

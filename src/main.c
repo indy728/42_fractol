@@ -12,30 +12,6 @@
 
 #include "fractol.h"
 
-void		quit_fractal(t_fractal *fractal);
-int			my_key_funct(int keycode, t_fractal *fractal);
-
-int		loop_hook(t_fractal *fractal)
-{
-	build_julia(fractal);
-	return (0);
-}
-
-void	init_hooks(t_fractal *fractal, int track_mouse)
-{
-	mlx_do_key_autorepeatoff(fractal->mlx);
-	mlx_hook(fractal->win, 2, 0, fractal->key_funct, fractal);
-	// mlx_hook(fractal->win, 3, 0, key_release_hook, fractal);
-// 	mlx_hook(fractal->ptr, 4, 0, mouse_press_hook, fractal);
-// 	mlx_hook(fractal->ptr, 5, 0, mouse_release_hook, fractal);
-// //	if (track_mouse)
-// 		mlx_hook(fractal->ptr, 6, 0, motion_hook, fractal);
-// 	mlx_hook(fractal->ptr, 12, 0, expose_hook, fractal);
-// 	mlx_hook(fractal->ptr, 17, 0, exit_hook, fractal);
-	mlx_loop_hook(fractal->mlx, loop_hook, fractal);
-}
-
-
 // static void	color_swap(int keycode, t_param *params)
 // {
 // 	if (keycode == ONE)
@@ -97,57 +73,7 @@ void	init_hooks(t_fractal *fractal, int track_mouse)
 // 		color_shift(keycode, &params->rgb->bmin);
 // }
 
-int			julia_key_funct(int keycode, t_fractal *fractal)
-{
-	// key_ops(keycode, params);
-	// if (keycode == ZERO)
-	// {
-	// 	ALPHA = 0;
-	// 	BETA = 0;
-	// 	GAMMA = 0;
-	// }
-	// if (ONE <= keycode && keycode <= EIGHT &&
-	// 		keycode != PLUS && keycode != MINUS)
-	// 	color_swap(keycode, params);
-	if (keycode == ESC)
-		quit_fractal(fractal);
-	t_julia *julia = (t_julia *)fractal->type;
-	if (keycode == A)
-		CX += .0005;
-	if (keycode == D)
-		CX -= .0005;
-	if (keycode == W)
-		CY += .0005;
-	if (keycode == S)
-		CY -= .0005;
-	if (keycode == RBRACK)
-		julia->zoom += .1;
-	if (keycode == LBRACK)
-		julia->zoom -= .1;
-	if (keycode == UP)
-		julia->move_y += 5;
-	if (keycode == DOWN)
-		julia->move_y -= 5;
-	if (keycode == LEFT)
-		julia->move_x += 5;
-	if (keycode == RIGHT)
-		julia->move_x -= 5;
-	if (keycode == PLUS)
-		julia->threshold *= 2;
-	if (keycode == MINUS)
-		julia->threshold /= 2;
-	if (keycode == O)
-		julia->step = ft_min(7, julia->step + 1);
-	if (keycode == ELL)
-		julia->step = ft_max(0, julia->step - 1);
-	if (keycode == U)
-		julia->mod = ft_min(20000, julia->mod * 2);
-	if (keycode == JAY)
-		julia->mod = ft_max(8, julia->mod / 2);
-	// mlx_clear_window(fractal->mlx, fractal->win);
-	// build_julia(fractal);
-	return (0);
-}
+
 
 void		destroy_fractal_img(t_fractal *fractal)
 {
