@@ -15,6 +15,12 @@
 void		quit_fractal(t_fractal *fractal);
 int			my_key_funct(int keycode, t_fractal *fractal);
 
+int		loop_hook(t_fractal *fractal)
+{
+	build_julia(fractal);
+	return (0);
+}
+
 void	init_hooks(t_fractal *fractal, int track_mouse)
 {
 	mlx_do_key_autorepeatoff(fractal->mlx);
@@ -26,7 +32,7 @@ void	init_hooks(t_fractal *fractal, int track_mouse)
 // 		mlx_hook(fractal->ptr, 6, 0, motion_hook, fractal);
 // 	mlx_hook(fractal->ptr, 12, 0, expose_hook, fractal);
 // 	mlx_hook(fractal->ptr, 17, 0, exit_hook, fractal);
-// 	mlx_loop_hook(fractal->mlx, loop_hook, fractal);
+	mlx_loop_hook(fractal->mlx, loop_hook, fractal);
 }
 
 
@@ -138,9 +144,9 @@ int			julia_key_funct(int keycode, t_fractal *fractal)
 		julia->mod = ft_min(20000, julia->mod * 2);
 	if (keycode == JAY)
 		julia->mod = ft_max(8, julia->mod / 2);
-	mlx_clear_window(fractal->mlx, fractal->win);
-	build_julia(fractal);
-	return (1);
+	// mlx_clear_window(fractal->mlx, fractal->win);
+	// build_julia(fractal);
+	return (0);
 }
 
 void		destroy_fractal_img(t_fractal *fractal)

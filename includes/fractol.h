@@ -29,7 +29,7 @@
 # define ARRAY "input map does not exist or is not valid"
 # define KMDB(x) ft_printf("HERE %d\n", x);
 # define WINX 1440
-# define WINY 900
+# define WINY 928
 # define CORES 4
 # define THREADS 8
 # define MAXTHREADS (CORES * THREADS)
@@ -40,19 +40,18 @@
 # define DCX -.7
 # define DCY .27015
 # define DMI 512
-
-# define ZX julia->zx
-# define ZY julia->zy
 # define CX julia->cx
 # define CY julia->cy
-# define TMP julia->tmp
+
+# define ZX params->zx
+# define ZY params->zy
+# define TMP params->tmp
+
 # define JI julia->max_iter
 
 typedef struct		s_julia
 {
-	long double 	zx;
-	long double 	zy;
-	long double 	tmp;
+	
 	double			cx;
 	double			cy;
 	int				max_iter;
