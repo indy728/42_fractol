@@ -7,13 +7,13 @@ typedef struct		s_julia_params
 	long double 	tmp;
 }					t_julia_params;
 
-typedef struct	s_thread
+typedef struct				s_thread
 {
-	t_img		*img;
-	int			thread_num;
+	t_img					*img;
+	int						thread_num;
 	struct s_julia_params	*params;
-	void		*algo;
-}				t_thread;
+	void					*algo;
+}							t_thread;
 
 t_julia_params	*init_julia_params()
 {
@@ -98,28 +98,48 @@ void		*julia_runner(void *thread_struct)
 	return (0);
 }
 
-void        build_julia(t_fractal *fractal)
+void		pthreads(t_fractal *fractal, void (*runner))
 {
-	mlx_clear_window(fractal->mlx, fractal->win);
-    t_julia *julia = (t_julia *)fractal->type;
-	julia->win_x = MAINWINX;
-	julia->win_y = MAINWINY;
 	pthread_t threads[MAXTHREADS];
-	t_thread julia_threads[MAXTHREADS];
-	for (int i = 0 ; i < MAXTHREADS ; i++)
+	t_thread fractal_threads[MAXTHREADS];
+	int i;
+
+	i = -1;
+	while (++i < MAXTHREADS)
 	{
-		julia_threads[i].thread_num = i;
-		julia_threads[i].img = fractal->img;
-		julia_threads[i].params = init_julia_params();
-		julia_threads[i].algo = (void *)julia;
+		fractal_threads[i].thread_num = i;
+		fractal_threads[i].img = fractal->img;
+		fractal_threads[i].params = init_julia_params();
+		fractal_threads[i].algo = (void *)fractal->type;
 		pthread_attr_t attr;
 		pthread_attr_init(&attr);
-		pthread_create(&threads[i], &attr, julia_runner, &julia_threads[i]);
+		pthread_create(&threads[i], &attr, runner, &fractal_threads[i]);
 	}
-	for (int i = 0 ; i < MAXTHREADS ; i++)
+
+	i = -1;
+	while (++i < MAXTHREADS)
 	{
 		pthread_join(threads[i], NULL);
 	}
+}
+
+void        build_julia(t_fractal *fractal)
+{
+    t_julia *julia;
+    int left;
+	int top;
+	
+	mlx_clear_window(fractal->mlx, fractal->win);
+    julia = (t_julia *)fractal->type;
+	julia->win_x = MAINWINX;
+	julia->win_y = MAINWINY;
+	pthreads(fractal, julia_runner);
+    left = WINX / 2 - MAINWINX / 2;
+	top = WINY / 2 - MAINWINY / 2;
+    mlx_put_image_to_window(fractal->mlx, fractal->win, fractal->img->ptr, left, top);
+	mlx_destroy_image(fractal->mlx, fractal->img->ptr);
+    clear_image(fractal);
+}
 	
 	// while (++y < julia->win_y)
 	// {
@@ -162,9 +182,3 @@ void        build_julia(t_fractal *fractal)
 	// 		i = 0;
 	// 	}
 	// }
-    int left = WINX / 2 - MAINWINX / 2;
-	int top = WINY / 2 - MAINWINY / 2;
-    mlx_put_image_to_window(fractal->mlx, fractal->win, fractal->img->ptr, left, top);
-	mlx_destroy_image(fractal->mlx, fractal->img->ptr);
-    clear_image(fractal);
-}
